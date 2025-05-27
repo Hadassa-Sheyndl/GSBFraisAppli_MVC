@@ -38,7 +38,7 @@
                            class="btn btn-success btn-lg" role="button">
                             <span class="glyphicon glyphicon-pencil"></span>
                             <br>Valider la fiche des frais </a>
-                        <a href="index.php?uc=mettreEnPaiement&action="
+                        <a href="index.php?uc=mettreEnPaiement&action=choixFiche"
                            class="btn btn-primary btn-lg" role="button" style="background-color: #fd9040 ; border-color: #fd9040">
                             <span class="glyphicon glyphicon-list-alt"></span>
                             <br>Mettre en paiement</a>

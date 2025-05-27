@@ -16,16 +16,9 @@
 ?>
 </header>
 <center>
-    <?php
-    $lesVisiteurs = $pdo->getLesVisiteurs();
-    foreach ($lesVisiteurs as $unVisiteur) {
-        $id = $unVisiteur['id'];
-        $nom = $unVisiteur['nom'];
-        $prenom = $unVisiteur['prenom'];
-    }
-    ?>
+    
     <h3> Fiche de frais validée avec succès !</h3>
-    <h2> La fiche de frais du <small> - Visiteur :
+    <h2> La fiche de frais de <small> 
     <?php
     echo $nom . ' ' . $prenom;
     ?></small> a été validée . <h2/>

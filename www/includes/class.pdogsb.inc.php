@@ -37,7 +37,10 @@
  */
 
 class PdoGsb
-{
+{    
+
+
+// connexion en localhost    
     private static $serveur = 'mysql:host=localhost';
     //wamp qui ouvre ma bdd
     private static $bdd = 'dbname=gsb_frais';
@@ -46,13 +49,25 @@ class PdoGsb
     private static $mdp = 'secret';
     private static $monPdo;
     private static $monPdoGsb = null;
+    
+/*// Connexion en externe 
+     
+    private static $serveur = 'mysql:host=db5017892112.hosting-data.io';
+    private static $bdd = 'dbname=dbs14251339';
+    private static $user = 'dbu799298';
+    private static $mdp = 'DuprazHadassa2025';
+    private static $monPdo;
+    private static $monPdoGsb = null;
+
+
+
 
     /**
      * Constructeur privé, crée l'instance de PDO qui sera sollicitée
      * pour toutes les méthodes de la classe
      */
     private function __construct()
-    //il initialise toutes les variables qui ne l'ont pas été dans l'initialisation d ela classe 
+    //il initialise toutes les variables qui ne l'ont pas été dans l'initialisation de la classe 
     {
         PdoGsb::$monPdo = new PDO(
             PdoGsb::$serveur . ';' . PdoGsb::$bdd,
@@ -622,11 +637,82 @@ class PdoGsb
     
     
     
+        public function majMontant($idVisiteur, $mois, $total)
+    {
+            $requetePrepare = PdoGSB::$monPdo->prepare(
+                'UPDATE fichefrais '
+                . 'SET fichefrais.montantvalide = :total '
+                . 'WHERE fichefrais.idvisiteur = :unIdVisiteur '
+                . 'AND fichefrais.mois = :unMois '
+            );
+            $requetePrepare->bindParam(':total', $total, PDO::PARAM_STR);
+            $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
+            $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
+            $requetePrepare->execute();
+        }
     
     
+
+    public function majEtatFrais($idVisiteur, $mois)
+    {
+        $requetePrepare = PdoGSB::$monPdo->prepare(
+            'UPDATE ficheFrais '
+            . 'SET fichefrais.idEtat = "VA" '
+            . 'WHERE fichefrais.idvisiteur = :unIdVisiteur '
+            . 'AND fichefrais.mois = :unMois'
+        );
+        $requetePrepare->bindParam(':unIdVisiteur', $idVisiteur, PDO::PARAM_STR);
+        $requetePrepare->bindParam(':unMois', $mois, PDO::PARAM_STR);
+        $requetePrepare->execute();
+    }
     
     
+    /**
+     * Retourne la liste de tous les visiteurs qui ont des fiches validées.
+     *
+     * @return array     la liste de tous les visiteurs sous forme de tableau associatif.
+     */
+    public function getLesVisiteursDontFicheVA()
+    {
+        $requetePrepare = PdoGsb::$monPdo->prepare(
+            'SELECT *'
+            .'FROM visiteur join fichefrais on(id=idvisiteur)'
+            .'WHERE fichefrais.idetat="VA"'  
+            .'ORDER BY nom'
+        );
+        $requetePrepare->execute();
+        return $requetePrepare->fetchAll();
+    }
+
+public function getLesMoisDontFicheVA()
+    {
+        $requetePrepare = PdoGSB::$monPdo->prepare(
+            'SELECT distinct fichefrais.mois AS mois FROM fichefrais '
+            . 'WHERE fichefrais.idetat="VA"'    
+            . 'ORDER BY fichefrais.mois desc'
+        );
+        $requetePrepare->execute();
+        $lesMois = array();
+        while ($laLigne = $requetePrepare->fetch()) {
+            $mois = $laLigne['mois'];
+            $numAnnee = substr($mois, 0, 4);
+            $numMois = substr($mois, 4, 2);
+            $lesMois[] = array(
+                'mois' => $mois,
+                'numAnnee' => $numAnnee,
+                'numMois' => $numMois
+            );
+        }
+        return $lesMois;
+    }
     
-    
-    
+    public function getUnVisiteur($idvisiteur){
+        $requetePrepare = PdoGSB::$monPdo->prepare(
+            'SELECT nom,prenom FROM visiteur WHERE id=:unId'
+        );
+        $requetePrepare->bindParam(':unId', $idvisiteur, PDO::PARAM_STR);
+        $requetePrepare->execute();
+        $lesVisiteurs = $requetePrepare->fetchAll();
+        return $lesVisiteurs;
+    }
 }

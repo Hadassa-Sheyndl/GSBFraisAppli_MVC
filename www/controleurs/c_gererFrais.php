@@ -38,7 +38,6 @@ case 'validerCreationFrais':
     $dateFrais = filter_input(INPUT_POST, 'dateFrais', FILTER_SANITIZE_SPECIAL_CHARS);
     $libelle = filter_input(INPUT_POST, 'libelle', FILTER_SANITIZE_SPECIAL_CHARS);
     $montant = filter_input(INPUT_POST, 'montant', FILTER_VALIDATE_FLOAT);
-    var_dump($montant);
     valideInfosFrais($dateFrais, $libelle, $montant);
     if (nbErreurs() != 0) {
         include 'vues/v_erreurs.php';
